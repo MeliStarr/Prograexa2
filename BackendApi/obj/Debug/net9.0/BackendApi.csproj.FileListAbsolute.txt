@@ -32,3 +32,4 @@ C:\Prograexa2\BackendApi\obj\Debug\net9.0\ref\BackendApi.dll
 C:\Prograexa2\BackendApi\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Prograexa2\BackendApi\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Prograexa2\BackendApi\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Prograexa2\BackendApi\obj\Debug\net9.0\BackendApi.sourcelink.json

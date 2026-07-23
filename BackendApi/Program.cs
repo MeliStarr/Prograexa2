@@ -1,11 +1,11 @@
-//using BackendApi.Models; // para reconocer tu AppDbContext
-//using Microsoft.EntityFrameworkCore; // para usar UseSqlServer
+using BackendApi.Models; // 
+using Microsoft.EntityFrameworkCore; // para usar sql
 
 var builder = WebApplication.CreateBuilder(args);
 
-// para conectar con la base de datos configurada en appsettings.json
-//builder.Services.AddDbContext<AppDbContext>(options =>
-  //  options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add services to the container.
 builder.Services.AddControllers();
