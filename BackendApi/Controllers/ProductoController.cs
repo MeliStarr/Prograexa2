@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using BackendApi.Models;
 
 namespace BackendApi.Controllers;
 
@@ -6,60 +8,68 @@ namespace BackendApi.Controllers;
 [Route("api/[controller]")]
 public class ProductoController : ControllerBase
 {
-	[HttpGet]
-	public IActionResult ObtenerProductos()
-	{
-		var productos = new[]
-		{
-			new
-			{
-				Id = 1,
-				Nombre = "Laptop Gamer",
-				Precio = 7500.50,
-				Categoria = "Tecnología"
-			},
-			new
-			{
-				Id = 2,
-				Nombre = "Smartphone X",
-				Precio = 4200.00,
-				Categoria = "Tecnología"
-			},
-			new
-			{
-				Id = 3,
-				Nombre = "Auriculares Bluetooth",
-				Precio = 350.75,
-				Categoria = "Accesorios"
-			},
-			new
-			{
-				Id = 4,
-				Nombre = "Monitor 24 pulgadas",
-				Precio = 1800.00,
-				Categoria = "Tecnología"
-			},
-			new
-			{
-				Id = 5,
-				Nombre = "Teclado Mecánico",
-				Precio = 450.00,
-				Categoria = "Accesorios"
-			}
-		};
-		return Ok(productos);
-	}
+    private readonly AppDbContext _context;
 
-	[HttpGet("{id}")]
-	public IActionResult ObtenerProductoPorId(int id)
-	{
-		var producto = new
-		{
-			Id = id,
-			Nombre = "Producto Ejemplo",
-			Precio = 999.99,
-			Categoria = "General"
-		};
-		return Ok(producto);
-	}
+    public ProductoController(AppDbContext context)
+    {
+        _context = context;
+    }
+
+    //get
+    [HttpGet]
+    public async Task<IActionResult> ObtenerProductos()
+    {
+        var lista = await _context.Productos.ToListAsync();
+        return Ok(lista);
+    }
+    [HttpGet("{id}")]
+    public IActionResult ObtenerProductoPorId(int id)
+    {
+        var producto = _context.Productos.Find(id);
+        if (producto == null) return NotFound(new { mensaje = "No existe ese producto" });
+        return Ok(producto);
+    }
+    //
+    [HttpGet("buscar")]
+    public async Task<IActionResult> Buscar(string nombre)
+    {
+        var productos = await _context.Productos
+            .Where(p => p.Nombre.Contains(nombre))
+            .ToListAsync();
+
+        return Ok(productos); 
+    }
+    //post
+    [HttpPost]
+    public IActionResult RegistrarProducto([FromBody] Producto producto)
+    {
+        _context.Productos.Add(producto);
+        _context.SaveChanges();
+        return Ok(new { mensaje = "Producto guardado con éxito", producto });
+    }
+//put
+    [HttpPut("{id}")]
+    public IActionResult ActualizarProducto(int id, [FromBody] Producto productoActualizado)
+    {
+        var producto = _context.Productos.Find(id);
+        if (producto == null) return NotFound(new { mensaje = "No existe ese producto" });
+
+        producto.Nombre = productoActualizado.Nombre;
+        producto.Precio = productoActualizado.Precio;
+        producto.Categoria = productoActualizado.Categoria;
+        _context.SaveChanges();
+        return Ok(new { mensaje = "Producto actualizado", producto });
+    }
+
+    //delete
+    [HttpDelete("{id}")]
+    public IActionResult EliminarProducto(int id)
+    {
+        var producto = _context.Productos.Find(id);
+        if (producto == null) return NotFound(new { mensaje = "No existe ese producto" });
+
+        _context.Productos.Remove(producto);
+        _context.SaveChanges();
+        return Ok(new { mensaje = "Producto eliminado" });
+    }
 }
